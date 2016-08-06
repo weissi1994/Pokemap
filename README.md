@@ -20,7 +20,7 @@ Features:
 
 #[Twitter] (https://twitter.com/PokemapDev), [Website] (https://jz6.github.io/PoGoMap/)#
 
-![Map](https://raw.githubusercontent.com/AHAAAAAAA/PokemonGo-Map/master/static/cover.png)
+![Map](https://raw.githubusercontent.com/Exoyds/PokemonGo-Map/master/static/cover.png)
 
 
 ## How to setup
