@@ -138,6 +138,6 @@ if __name__ == '__main__':
         while search_thread.is_alive():
             time.sleep(60)
     else:
-        context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
-        context.load_cert_chain(keyfile="/etc/letsencrypt/live/git.derzer.at/privkey.pem", certfile="/etc/letsencrypt/live/git.derzer.at/cert.pem")
-        app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port, ssl_context=context)
+        #context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+        #context.load_cert_chain(keyfile="/etc/letsencrypt/live/git.derzer.at/privkey.pem", #certfile="/etc/letsencrypt/live/git.derzer.at/cert.pem")
+        app.run(threaded=True, use_reloader=False, debug=args.debug, host=args.host, port=args.port)#, ssl_context=context)
