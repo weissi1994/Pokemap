@@ -401,7 +401,6 @@ def clean_database():
     query.execute()
     flaskDb.close_db(None)
 
-
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
@@ -420,7 +419,6 @@ def bulk_upsert(cls, data):
         i+=step
 
     flaskDb.close_db(None)
-
 
 def create_tables(db):
     db.connect()
