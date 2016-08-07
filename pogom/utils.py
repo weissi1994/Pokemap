@@ -16,6 +16,10 @@ from importlib import import_module
 from s2sphere import LatLng, CellId
 from geopy.geocoders import GoogleV3
 
+from importlib import import_module
+from s2sphere import LatLng, CellId
+from geopy.geocoders import GoogleV3
+
 from . import config
 
 log = logging.getLogger(__name__)

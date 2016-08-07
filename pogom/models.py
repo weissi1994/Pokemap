@@ -293,10 +293,15 @@ def parse_map(map_dict, step_location):
     gyms = {}
     scanned = {}
 
-    cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    try:
+        cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    except TypeError:
+        log.error("Could´t fetch data, is your account activated?")
+        return False
     for cell in cells:
         if config['parse_pokemon']:
             for p in cell.get('wild_pokemons', []):
+                log.error(p)
                 d_t = datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
                      p['time_till_hidden_ms']) / 1000.0)
@@ -412,7 +417,6 @@ def clean_database():
     query.execute()
     flaskDb.close_db(None)
 
-
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
     i = 0
@@ -431,7 +435,6 @@ def bulk_upsert(cls, data):
         i+=step
 
     flaskDb.close_db(None)
-
 
 def create_tables(db):
     db.connect()
