@@ -217,6 +217,7 @@ def search_worker_thread(args, account, search_items_queue, parse_lock):
                     # Make the actual request (finally!)
                     response_dict = map_request(api, step_location)
 
+#                    log.error(response_dict)
                     # G'damnit, nothing back. Mark it up, sleep, carry on
                     if not response_dict:
                         log.error('Search step %d area download failed, retyring request in %g seconds', step, sleep_time)
@@ -252,15 +253,20 @@ def check_login(args, account, api, position):
             log.debug('Credentials remain valid for another %f seconds', remaining_time)
             return
 
+    api.set_position(*position)
+
     # Try to login (a few times, but don't get stuck here)
-    i = 0
-    while not api.login(account['auth_service'], account['username'], account['password'], position[0], position[1], position[2], False):
-        if i >= args.login_retries:
-            raise TooManyLoginAttempts('Exceeded login attempts')
-        else:
-            i += 1
-            log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
-            time.sleep(args.login_delay)
+    api.set_authentication(provider = account['auth_service'], username = account['username'], password = account['password'])
+    #i = 0
+    #while not api.set_authentication(provider = account['auth_service'], username = account['username'], password = account['password']):
+    #    if i >= args.login_retries:
+    #        raise TooManyLoginAttempts('Exceeded login attempts')
+    #    else:
+    #        i += 1
+    #        log.error('Failed to login to Pokemon Go. Trying again in %g seconds', args.login_delay)
+    #        time.sleep(args.login_delay)
+            
+    api.activate_signature("libencrypt.so")
 
     log.debug('Login for account %s successful', account['username'])
 
