@@ -293,9 +293,11 @@ def parse_map(map_dict, step_location):
     gyms = {}
     scanned = {}
 
-    if (map_dict['responses']['GET_MAP_OBJECTS']['status'] != 1):
+    try:
+        cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
+    except TypeError:
+        log.error("Could´t fetch data, is your account activated?")
         return False
-    cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         if config['parse_pokemon']:
             for p in cell.get('wild_pokemons', []):
