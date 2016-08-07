@@ -293,6 +293,8 @@ def parse_map(map_dict, step_location):
     gyms = {}
     scanned = {}
 
+    if (map_dict['responses']['GET_MAP_OBJECTS']['status'] != 1):
+        return False
     cells = map_dict['responses']['GET_MAP_OBJECTS']['map_cells']
     for cell in cells:
         if config['parse_pokemon']:
