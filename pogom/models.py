@@ -299,6 +299,7 @@ def parse_map(map_dict, step_location):
         log.error("Could´t fetch data, is your account activated?")
         return False
     for cell in cells:
+        log.error(cell.get('wild_pokemons', []))
         if config['parse_pokemon']:
             for p in cell.get('wild_pokemons', []):
                 log.error(p)
