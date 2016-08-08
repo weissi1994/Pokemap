@@ -18,3 +18,7 @@ LatLon==1.0.1
 -e git+https://github.com/keyphact/pgoapi.git#egg=pgoapi
 -e https://github.com/jepayne1138/PTCAccount.git#egg=ptcaccount
 xxhash
+sphinx==1.4.5
+sphinx-autobuild==0.6.0
+recommonmark==0.4.0
+sphinx_rtd_theme==0.1.9
