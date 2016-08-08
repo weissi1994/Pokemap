@@ -299,10 +299,8 @@ def parse_map(map_dict, step_location):
         log.error("Could´t fetch data, is your account activated?")
         return False
     for cell in cells:
-        log.error(cell.get('wild_pokemons', []))
         if config['parse_pokemon']:
-            for p in cell.get('wild_pokemons', []):
-                log.error(p)
+            for p in cell.get('wild_pokemon', []):
                 d_t = datetime.utcfromtimestamp(
                     (p['last_modified_timestamp_ms'] +
                      p['time_till_hidden_ms']) / 1000.0)

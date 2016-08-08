@@ -61,6 +61,7 @@ module.exports = function(grunt) {
           'static/dist/locales/pt_br.min.json': 'static/locales/pt_br.json',
           'static/dist/locales/ru.min.json': 'static/locales/ru.json',
           'static/dist/locales/zh_cn.min.json': 'static/locales/zh_cn.json',
+          'static/dist/locales/zh_tw.min.json': 'static/locales/zh_tw.json',
           'static/dist/locales/zh_hk.min.json': 'static/locales/zh_hk.json'
         }
       }
@@ -121,7 +122,7 @@ module.exports = function(grunt) {
   grunt.registerTask('css-build', ['sass', 'cssmin']);
   grunt.registerTask('js-lint', ['eslint']);
 
-  grunt.registerTask('build', ['clean', 'js-build', 'css-build']);
+  grunt.registerTask('build', ['lint', 'clean', 'js-build', 'css-build']);
   grunt.registerTask('lint', ['js-lint']);
   grunt.registerTask('default', ['build', 'watch']);
 

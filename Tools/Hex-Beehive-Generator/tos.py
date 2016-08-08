@@ -22,8 +22,9 @@ def accept_tos(username, password):
         response = req.call()
         print('Accepted Terms of Service for {}'.format(username))
 
-with open(str(sys.argv[1])) as f:
-        credentials = [x.strip().split(',') for x in f.readlines()]
+if __name__ == "__main__":
+    with open(str(sys.argv[1])) as f:
+            credentials = [x.strip().split(',') for x in f.readlines()]
 
-for username,password in credentials:
-        accept_tos(username, password)
+    for username,password in credentials:
+            accept_tos(username, password)

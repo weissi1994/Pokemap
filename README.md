@@ -1,5 +1,5 @@
 
-# PokemonGo Map![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg)[![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/PoGoMapDev)
+# PokemonGo Map ![Python 2.7](https://img.shields.io/badge/python-2.7-blue.svg) [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.me/PoGoMapDev) [![Build Status](https://travis-ci.org/PokemonGoMap/PokemonGo-Map.svg?branch=develop)](https://travis-ci.org/PokemonGoMap/PokemonGo-Map)
 
 
 #[Twitter] (https://twitter.com/PokemapDevRE), [Website] (https://pokemongomap.github.io/PoGoMapWebsite/)#
@@ -16,7 +16,7 @@ Features:
 * Multithreaded mode
 * Filters
 * Independent worker threads (many can be used simulatenously to quickly generate a livemap of a huge geographical area)
-* Localization (en, fr, pt_br, de, ru, zh_cn, zh_hk)
+* Localization (en, fr, pt_br, de, ru, zh_tw, zh_cn, zh_hk)
 * DB storage (sqlite or mysql) of all found pokemon
 * Incredibly fast, efficient searching algorithm (compared to everything else available)
 
