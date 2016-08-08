@@ -214,12 +214,10 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
                     sleep_time = args.scan_delay * (1+failed_total)
                     
                     # Ok, let's get started -- check our login status
-                    api.set_authentication(provider = account['auth_service'], username = account['username'], password = account['password'])
-                    #check_login(args, account, api, step_location)
-                    #if not check_login(args, account, api, step_location):
-                    #    failed_total += 1
-                    #    time.sleep(sleep_time)
-                    #    continue
+                    if not check_login(args, account, api, step_location):
+                        failed_total += 1
+                        time.sleep(sleep_time)
+                        continue
 
                     api.activate_signature(encryption_lib_path)
 
