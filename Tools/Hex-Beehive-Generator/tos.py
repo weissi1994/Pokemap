@@ -18,7 +18,7 @@ def accept_tos(username, password):
         api.login('ptc', username, password)
         time.sleep(2)
         req = api.create_request()
-        req.mark_tutorial_complete(tutorials_completed = 0, send_marketing_emails = False, send_push_notifications = False)
+        req.mark_tutorial_complete(tutorials_completed = [0, 1, 3, 4, 7], send_marketing_emails = False, send_push_notifications = False)
         response = req.call()
         print('Accepted Terms of Service for {}'.format(username))
 
