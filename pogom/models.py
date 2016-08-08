@@ -16,7 +16,7 @@ from base64 import b64encode
 from . import config
 from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
-from .customLog import printPokemon
+from .customLog import printPokemon, printNearPokemon
 
 log = logging.getLogger(__name__)
 
@@ -321,7 +321,58 @@ def parse_map(map_dict, step_location):
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
                     'disappear_time': calendar.timegm(d_t.timetuple()),
-                    'expiration_timestamp_ms': p['expiration_timestamp_ms'],
+                    'last_modified_time': p['expiration_timestamp_ms'],
+                    'is_lured': False
+                }
+
+                send_to_webhook('pokemon', webhook_data)
+        
+            for p in cell.get('nearby_pokemons', []):
+                #d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
+                printNearPokemon(p['pokemon_id'])
+                pokemons[p['encounter_id']] = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': -1, #p['spawn_point_id'],
+                    'pokemon_id': p['pokemon_id'],
+                    'latitude': step_location[0], #p['latitude'],
+                    'longitude': step_location[1], #p['longitude'],
+                    'disappear_time': datetime.now() + timedelta(minutes = 10) #d_t
+                }
+
+                webhook_data = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': -1, #p['spawn_point_id'],
+                    'pokemon_id': p['pokemon_id'],
+                    'latitude': step_location[0], #p['latitude'],
+                    'longitude': step_location[0], #p['longitude'],
+                    'disappear_time': datetime.now() + timedelta(minutes = 10), #calendar.timegm(d_t.timetuple()),
+                    'last_modified_time': datetime.now() + timedelta(minutes = 10), # p['expiration_timestamp_ms'],
+                    'is_lured': False
+                }
+
+                send_to_webhook('pokemon', webhook_data)
+            
+            for p in cell.get('wild_pokemons', []):
+                d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
+                printPokemon(p['pokemon_id'], p['latitude'],
+                             p['longitude'], d_t)
+                pokemons[p['encounter_id']] = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': p['spawn_point_id'],
+                    'pokemon_id': p['pokemon_id'],
+                    'latitude': p['latitude'],
+                    'longitude': p['longitude'],
+                    'disappear_time': d_t
+                }
+
+                webhook_data = {
+                    'encounter_id': b64encode(str(p['encounter_id'])),
+                    'spawnpoint_id': p['spawn_point_id'],
+                    'pokemon_id': p['pokemon_id'],
+                    'latitude': p['latitude'],
+                    'longitude': p['longitude'],
+                    'disappear_time': calendar.timegm(d_t.timetuple()),
+                    'last_modified_time': p['expiration_timestamp_ms'],
                     'is_lured': False
                 }
 
