@@ -17,7 +17,7 @@ from base64 import b64encode
 from . import config
 from .utils import get_pokemon_name, get_pokemon_rarity, get_pokemon_types, get_args, send_to_webhook
 from .transform import transform_from_wgs_to_gcj
-from .customLog import printPokemon, printNearPokemon
+from .customLog import printPokemon
 
 log = logging.getLogger(__name__)
 
