@@ -215,6 +215,7 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
                     
                     # Ok, let's get started -- check our login status
                     if not check_login(args, account, api, step_location):
+                        log.error('Seems like we are not logged in')
                         failed_total += 1
                         time.sleep(sleep_time)
                         continue
@@ -223,8 +224,6 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
 
                     # Make the actual request (finally!)
                     response_dict = map_request(api, step_location)
-                    
-                    log.warn(response_dict)
 
                     # G'damnit, nothing back. Mark it up, sleep, carry on
                     if not response_dict:
@@ -283,7 +282,6 @@ def check_login(args, account, api, position):
 def map_request(api, position):
     try:
         cell_ids = util.get_cell_ids(position[0], position[1])
-        time.sleep(1)
         timestamps = [0,] * len(cell_ids)
         return api.get_map_objects(latitude=f2i(position[0]),
                             longitude=f2i(position[1]),

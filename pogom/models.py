@@ -307,8 +307,8 @@ def parse_map(map_dict, step_location):
         if config['parse_pokemon']:
             for p in cell.get('catchable_pokemons', []):
                 if len(p) > 0:
-                    log.warn("####################### CATCHABLE_POKEMONS #######################")
-                    log.warn(p)
+                    #log.warn("####################### CATCHABLE_POKEMONS #######################")
+                    #log.warn(p)
                     d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
                     printPokemon(p['pokemon_id'], p['latitude'],
                              p['longitude'], d_t)
@@ -322,8 +322,8 @@ def parse_map(map_dict, step_location):
                     }
             for p in cell.get('wild_pokemons', []):
                 if len(p) > 0:
-                    log.warn("####################### WILD_POKEMONS #######################")
-                    log.warn(p)
+                    #log.warn("####################### WILD_POKEMONS #######################")
+                    #log.warn(p)
                     d_t = datetime.utcfromtimestamp(
                             (p['last_modified_timestamp_ms'] +
                             p['time_till_hidden_ms']) / 1000.0)
