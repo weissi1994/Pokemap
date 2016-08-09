@@ -3,16 +3,11 @@
 
 import logging
 import calendar
-<<<<<<< HEAD
 #import random
-from peewee import Model, SqliteDatabase, InsertQuery,\
-                   IntegerField, CharField, DoubleField, BooleanField,\
-                   DateTimeField, OperationalError, create_model_tables, fn
-=======
 from peewee import SqliteDatabase, InsertQuery, \
     IntegerField, CharField, DoubleField, BooleanField, \
     DateTimeField, fn
->>>>>>> refs/heads/develop
+
 from playhouse.flask_utils import FlaskDB
 from playhouse.pool import PooledMySQLDatabase
 from playhouse.shortcuts import RetryOperationalError
@@ -310,62 +305,47 @@ def parse_map(map_dict, step_location):
         return False
     for cell in cells:
         if config['parse_pokemon']:
-#            for p in cell.get('nearby_pokemons', []):
-#                #d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
-#                printNearPokemon(p['pokemon_id'])
-#                tmp_lat = + random.uniform(0.00009, 0.0002)
-#                tmp_lon = + random.uniform(0.00009, 0.0002)
-#                pokemons[p['encounter_id']] = {
-#                    'encounter_id': b64encode(str(p['encounter_id'])),
-#                    'spawnpoint_id': -1, #p['spawn_point_id'],
-#                    'pokemon_id': p['pokemon_id'],
-#                    'latitude': tmp_lat, #p['latitude'],
-#                    'longitude': tmp_lon, #p['longitude'],
-#                    'disappear_time': datetime.utcnow() + timedelta(minutes = 10) #d_t
-#                }
-#
-
-            ## catchable_pokemons OR nearby_pokemons
-            for p in cell.get('wild_pokemons', []):
-                log.warn("####################### WILD_POKEMONS #######################")
-                log.warn(p)
-                d_t = datetime.utcfromtimestamp(
-                    (p['last_modified_timestamp_ms'] +
-                     p['time_till_hidden_ms']) / 1000.0)
-                printPokemon(p['pokemon_data']['pokemon_id'], p['latitude'],
-                             p['longitude'], d_t)
-                pokemons[p['encounter_id']] = {
-                    'encounter_id': b64encode(str(p['encounter_id'])),
-                    'spawnpoint_id': p['spawn_point_id'],
-                    'pokemon_id': p['pokemon_data']['pokemon_id'],
-                    'latitude': p['latitude'],
-                    'longitude': p['longitude'],
-                    'disappear_time': d_t
-                }
             for p in cell.get('catchable_pokemons', []):
-                log.warn("####################### CATCHABLE_POKEMONS #######################")
-                log.warn(p)
-                d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
-                printPokemon(p['pokemon_id'], p['latitude'],
+                if len(p) > 0:
+                    log.warn("####################### CATCHABLE_POKEMONS #######################")
+                    log.warn(p)
+                    d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
+                    printPokemon(p['pokemon_id'], p['latitude'],
                              p['longitude'], d_t)
-                pokemons[p['encounter_id']] = {
-                    'encounter_id': b64encode(str(p['encounter_id'])),
-                    'spawnpoint_id': p['spawn_point_id'],
-                    'pokemon_id': p['pokemon_data']['pokemon_id'],
-                    'latitude': p['latitude'],
-                    'longitude': p['longitude'],
-                    'disappear_time': d_t
-                }
-
-
+                    pokemons[p['encounter_id']] = {
+                            'encounter_id': b64encode(str(p['encounter_id'])),
+                            'spawnpoint_id': p['spawn_point_id'],
+                            'pokemon_id': p['pokemon_data']['pokemon_id'],
+                            'latitude': p['latitude'],
+                            'longitude': p['longitude'],
+                            'disappear_time': d_t
+                    }
+            for p in cell.get('wild_pokemons', []):
+                if len(p) > 0:
+                    log.warn("####################### WILD_POKEMONS #######################")
+                    log.warn(p)
+                    d_t = datetime.utcfromtimestamp(
+                            (p['last_modified_timestamp_ms'] +
+                            p['time_till_hidden_ms']) / 1000.0)
+                    printPokemon(p['pokemon_data']['pokemon_id'], p['latitude'],
+                            p['longitude'], d_t)
+                    pokemons[p['encounter_id']] = {
+                            'encounter_id': b64encode(str(p['encounter_id'])),
+                            'spawnpoint_id': p['spawn_point_id'],
+                            'pokemon_id': p['pokemon_data']['pokemon_id'],
+                            'latitude': p['latitude'],
+                            'longitude': p['longitude'],
+                            'disappear_time': d_t
+                    }
+                    
+            for p in pokemons.values():
                 webhook_data = {
-                    'encounter_id': b64encode(str(p['encounter_id'])),
-                    'spawnpoint_id': p['spawn_point_id'],
-                    'pokemon_id': p['pokemon_data']['pokemon_id'],
+                    'encounter_id': p['encounter_id'],
+                    'spawnpoint_id': p['spawnpoint_id'],
+                    'pokemon_id': p['pokemon_id'],
                     'latitude': p['latitude'],
                     'longitude': p['longitude'],
-                    'disappear_time': calendar.timegm(d_t.timetuple()),
-                    'last_modified_time': p['last_modified_timestamp_ms'],
+                    'disappear_time': p['disappear_time'],
                     'is_lured': False
                 }
 
