@@ -450,6 +450,10 @@ def clean_database():
                  .where((Pokemon.disappear_time <
                         (datetime.utcnow() - timedelta(hours=args.purge_data)))))
         query.execute()
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/original/develop
 
 def bulk_upsert(cls, data):
     num_rows = len(data.values())
@@ -465,6 +469,10 @@ def bulk_upsert(cls, data):
             continue
 
         i += step
+<<<<<<< HEAD
+=======
+
+>>>>>>> refs/remotes/original/develop
 
 def create_tables(db):
     db.connect()
