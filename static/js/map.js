@@ -3,7 +3,8 @@
 //
 
 var $selectExclude
-var $selectNotify
+var $selectPokemonNotify
+var $selectRarityNotify
 var $selectStyle
 var $selectIconResolution
 var $selectIconSize
@@ -17,6 +18,7 @@ var languageLookupThreshold = 3
 
 var excludedPokemon = []
 var notifiedPokemon = []
+var notifiedRarity = []
 
 var map
 var rawDataIsLoading = false
@@ -698,6 +700,10 @@ var StoreOptions = {
     default: [],
     type: StoreTypes.JSON
   },
+  'remember_select_rarity_notify': {
+    default: [],
+    type: StoreTypes.JSON
+  },
   'showGyms': {
     default: false,
     type: StoreTypes.Boolean
@@ -784,8 +790,8 @@ function excludePokemon (id) { // eslint-disable-line no-unused-vars
 }
 
 function notifyAboutPokemon (id) { // eslint-disable-line no-unused-vars
-  $selectNotify.val(
-    $selectNotify.val().concat(id)
+  $selectPokemonNotify.val(
+    $selectPokemonNotify.val().concat(id)
   ).trigger('change')
 }
 
@@ -1162,7 +1168,7 @@ function setupPokemonMarker (item, skipNotification, isBounceDisabled) {
     disableAutoPan: true
   })
 
-  if (notifiedPokemon.indexOf(item['pokemon_id']) > -1) {
+  if (notifiedPokemon.indexOf(item['pokemon_id']) > -1 || notifiedRarity.indexOf(item['pokemon_rarity']) > -1) {
     if (!skipNotification) {
       if (Store.get('playSound')) {
         audio.play()
@@ -1441,14 +1447,14 @@ function processLuredPokemon (i, item) {
     return false
   }
   var item2 = {
-    pokestopId: item['pokestop_id'],
-    lureExpiration: item['lure_expiration'],
-    pokemonId: item['active_pokemon_id'],
-    latitude: item['latitude'] + 0.00005,
-    longitude: item['longitude'] + 0.00005,
-    pokemonName: item['active_pokemon_id'] in idToPokemon ? idToPokemon[item['active_pokemon_id']]['name'] : null,
-    pokemonRarity: item['active_pokemon_id'] in idToPokemon ? idToPokemon[item['active_pokemon_id']]['rarity'] : null,
-    disappearTime: item['lure_expiration']
+    'pokestop_id': item['pokestop_id'],
+    'lure_expiration': item['lure_expiration'],
+    'pokemon_id': item['active_pokemon_id'],
+    'latitude': item['latitude'] + 0.00005,
+    'longitude': item['longitude'] + 0.00005,
+    'pokemon_name': item['active_pokemon_id'] in idToPokemon ? idToPokemon[item['active_pokemon_id']]['name'] : null,
+    'pokemon_rarity': item['active_pokemon_id'] in idToPokemon ? idToPokemon[item['active_pokemon_id']]['rarity'] : null,
+    'disappear_time': item['lure_expiration']
   }
 
   if (!item2['pokemon_id']) {
@@ -1833,7 +1839,8 @@ $(function () {
   }
 
   $selectExclude = $('#exclude-pokemon')
-  $selectNotify = $('#notify-pokemon')
+  $selectPokemonNotify = $('#notify-pokemon')
+  $selectRarityNotify = $('#notify-rarity')
   var numberOfPokemon = 151
 
   // Load pokemon names and populate lists
@@ -1867,9 +1874,14 @@ $(function () {
       data: pokeList,
       templateResult: formatState
     })
-    $selectNotify.select2({
+    $selectPokemonNotify.select2({
       placeholder: i8ln('Select Pokémon'),
       data: pokeList,
+      templateResult: formatState
+    })
+    $selectRarityNotify.select2({
+      placeholder: i8ln('Select Rarity'),
+      data: [i8ln('Common'), i8ln('Uncommon'), i8ln('Rare'), i8ln('Very Rare'), i8ln('Ultra Rare')],
       templateResult: formatState
     })
 
@@ -1879,14 +1891,19 @@ $(function () {
       clearStaleMarkers()
       Store.set('remember_select_exclude', excludedPokemon)
     })
-    $selectNotify.on('change', function (e) {
-      notifiedPokemon = $selectNotify.val().map(Number)
+    $selectPokemonNotify.on('change', function (e) {
+      notifiedPokemon = $selectPokemonNotify.val().map(Number)
       Store.set('remember_select_notify', notifiedPokemon)
+    })
+    $selectRarityNotify.on('change', function (e) {
+      notifiedRarity = $selectRarityNotify.val().map(String)
+      Store.set('remember_select_rarity_notify', notifiedRarity)
     })
 
     // recall saved lists
     $selectExclude.val(Store.get('remember_select_exclude')).trigger('change')
-    $selectNotify.val(Store.get('remember_select_notify')).trigger('change')
+    $selectPokemonNotify.val(Store.get('remember_select_notify')).trigger('change')
+    $selectRarityNotify.val(Store.get('remember_select_rarity_notify')).trigger('change')
   })
 
   // run interval timers to regularly update map and timediffs

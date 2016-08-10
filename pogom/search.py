@@ -184,16 +184,19 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
             # Create the API instance this will use
             api = PGoApi()
 
+            # Get current time
+            loop_start_time = int(round(time.time() * 1000))
+
             # The forever loop for the searches
             while True:
 
                 # Grab the next thing to search (when available)
                 step, step_location = search_items_queue.get()
-
-                log.info('Search step %d beginning (queue size is %d)', step, search_items_queue.qsize())
-
+                
                 # Let the api know where we intend to be for this loop
                 api.set_position(*step_location)
+
+                log.info('Search step %d beginning (queue size is %d)', step, search_items_queue.qsize())
 
                 # The loop to try very hard to scan this step
                 failed_total = 0
@@ -212,9 +215,13 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
                     # By default scan_dela=5, scan_retries=5 so
                     # We'd see timeouts of 5, 10, 15, 20, 25
                     sleep_time = args.scan_delay * (1+failed_total)
-
+                    
                     # Ok, let's get started -- check our login status
-                    check_login(args, account, api, step_location)
+                    if not check_login(args, account, api, step_location):
+                        log.error('Seems like we are not logged in')
+                        failed_total += 1
+                        time.sleep(sleep_time)
+                        continue
 
                     api.activate_signature(encryption_lib_path)
 
@@ -240,7 +247,13 @@ def search_worker_thread(args, account, search_items_queue, parse_lock, encrypti
                             failed_total += 1
                             time.sleep(sleep_time)
 
-                time.sleep(args.scan_delay)
+                # If there's any time left between the start time and the time when we should be kicking off the next
+                # loop, hang out until its up.
+                sleep_delay_remaining = loop_start_time + (args.scan_delay * 1000) - int(round(time.time() * 1000))
+                if sleep_delay_remaining > 0:
+                    time.sleep(sleep_delay_remaining / 1000)
+
+                loop_start_time += args.scan_delay * 1000
 
         # catch any process exceptions, log them, and continue the thread
         except Exception as e:
@@ -254,7 +267,7 @@ def check_login(args, account, api, position):
         remaining_time = api._auth_provider._ticket_expire/1000 - time.time()
         if remaining_time > 60:
             log.debug('Credentials remain valid for another %f seconds', remaining_time)
-            return
+            return True
 
     # Try to login (a few times, but don't get stuck here)
     i = 0
@@ -270,8 +283,10 @@ def check_login(args, account, api, position):
                 i += 1
                 log.error('Failed to login to Pokemon Go with account %s. Trying again in %g seconds', account['username'], args.login_delay)
                 time.sleep(args.login_delay)
-
+    if i >= args.login_retries:
+        return False
     log.debug('Login for account %s successful', account['username'])
+    return True
 
 def map_request(api, position):
     try:
