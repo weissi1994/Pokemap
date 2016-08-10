@@ -301,6 +301,7 @@ def parse_map(map_dict, step_location):
     for cell in cells:
         if config['parse_pokemon']:
             ## catchable_pokemons OR nearby_pokemons
+            print(cell.get('wild_pokemons', []))
             for p in cell.get('catchable_pokemons', []):
                 d_t = datetime.utcfromtimestamp(p['expiration_timestamp_ms'] / 1000.0)
                 printPokemon(p['pokemon_id'], p['latitude'],
